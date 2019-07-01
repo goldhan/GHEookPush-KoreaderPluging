@@ -53,12 +53,11 @@ end
 function GHEMailManager.loadAllMail()
     for _,v in pairs(GHEMailManager.connection:fetch('(UID BODY[2.MIME])')) do
         if v.BODY.value ~= "NIL" then
-            print(v.BODY.value)
-            local str = trim(v.BODY.value)
-            local list = split(str, '\'\'')
-            local fileName = list[#list]
-            local date = {id=v.id, name=urlDecode(fileName)}
-            GHEMailManager.EBookList_All[v.id] = date
+            local fileName = string.match(v.BODY.value,"filename.+[',\"](.+%.%a+)" )
+            if fileName then
+                local date = {id=v.id, name= urlDecode(fileName)}
+                GHEMailManager.EBookList_All[v.id] = date
+            end
         end
     end
     -- for _,v in pairs(GHEMailManager.connection:_do_cmd("FETCH 1 BODY.PEEK[2.MIME]")) do
